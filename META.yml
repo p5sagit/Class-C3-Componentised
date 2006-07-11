@@ -1,0 +1,16 @@
+---
+name: Class-C3-Componentised
+version: 0.01
+author:
+  - 'Matt S. Trout <mst@shadowcatsystems.co.uk>'
+abstract: ~
+license: perl
+requires:
+  Class::C3: 0
+build_requires:
+  Test::More: 0
+provides:
+  Class::C3::Componentised:
+    file: lib/Class/C3/Componentised.pm
+    version: 0.01
+generated_by: Module::Build version 0.26
