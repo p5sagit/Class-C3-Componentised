@@ -1,40 +1,63 @@
 package Class::C3::Componentised;
 
+=head1 NAME
+
+Class::C3::Componentised
+
+=head1 DESCRIPTION
+
+Load mix-ins or components to your C3-based class.
+
+=head1 SYNOPSIS
+
+  package MyModule;
+
+  use strict;
+  use warnings;
+
+  use base 'Class::C3::Componentised';
+
+  sub component_base_class { "MyModule::Plugin" }
+
+  package main;
+
+  MyModule->load_components( $self->{plugins} );
+
+=head1 METHODS
+
+=cut
+
 use strict;
 use warnings;
 
-use vars qw($VERSION);
-
 use Class::C3;
+use Class::Inspector;
+use Carp;
 
-$VERSION = "0.01";
+our $VERSION = 1.0000;
 
-sub inject_base {
-  my ($class, $target, @to_inject) = @_;
-  {
-    no strict 'refs';
-    my %seen;
-    unshift( @{"${target}::ISA"},
-        grep { !$seen{ $_ }++ && $target ne $_ && !$target->isa($_) }
-            @to_inject
-    );
-  }
+=head2 load_components( @comps )
 
-  # Yes, this is hack. But it *does* work. Please don't submit tickets about
-  # it on the basis of the comments in Class::C3, the author was on #dbix-class
-  # while I was implementing this.
+Loads the given components into the current module. If a module begins with a 
+C<+> character, it is taken to be a fully qualified class name, otherwise
+C<< $class->component_base_class >> is prepended to it.
 
-  my $table = { Class::C3::_dump_MRO_table };
-  eval "package $target; import Class::C3;" unless exists $table->{$target};
-}
+Calling this will call C<Class::C3::reinitialize>.
+
+=cut
 
 sub load_components {
   my $class = shift;
   my $base = $class->component_base_class;
   my @comp = map { /^\+(.*)$/ ? $1 : "${base}::$_" } grep { $_ !~ /^#/ } @_;
   $class->_load_components(@comp);
-  Class::C3::reinitialize();
 }
+
+=head2 load_own_components( @comps )
+
+Simialr to L<load_components>, but assumes every class is C<"$class::$comp">.
+
+=cut
 
 sub load_own_components {
   my $class = shift;
@@ -45,45 +68,118 @@ sub load_own_components {
 sub _load_components {
   my ($class, @comp) = @_;
   foreach my $comp (@comp) {
-    eval "use $comp";
-    die $@ if $@;
+    $class->ensure_class_loaded($comp);
   }
   $class->inject_base($class => @comp);
+  Class::C3::reinitialize();
 }
 
-1;
+=head2 load_optional_components
 
-__END__
+As L<load_components>, but will silently ignore any components that cannot be 
+found.
 
-=head1 NAME
+=cut
 
-Class::C3::Componentised - extend and mix classes at runtime
+sub load_optional_components {
+  my $class = shift;
+  my $base = $class->component_base_class;
+  my @comp = grep { $class->load_optional_class( $_ ) }
+             map { /^\+(.*)$/ ? $1 : "${base}::$_" } 
+             grep { $_ !~ /^#/ } @_;
 
-=head1 SYNOPSIS
+  $class->_load_components( @comp ) if scalar @comp;
+}
 
-    package MyApp;
+=head2 ensure_class_loaded
 
-    use base "Class::C3::Componentised";
+Given a class name, tests to see if it is already loaded or otherwise
+defined. If it is not yet loaded, the package is require'd, and an exception
+is thrown if the class is still not loaded.
 
-    sub component_base_class { "MyApp" };
-    
+ BUG: For some reason, packages with syntax errors are added to %INC on
+      require
+=cut
 
-    package main;
+#
+# TODO: handle ->has_many('rel', 'Class'...) instead of
+#              ->has_many('rel', 'Some::Schema::Class'...)
+#
+sub ensure_class_loaded {
+  my ($class, $f_class) = @_;
 
-    MyApp->load_components(qw/Foo Bar Baz/);
+  croak "Invalid class name $f_class"
+      if ($f_class=~m/(?:\b:\b|\:{3,})/);
+  return if Class::Inspector->loaded($f_class);
+  eval "require $f_class"; # require needs a bareword or filename
+  if ($@) {
+    if ($class->can('throw_exception')) {
+      $class->throw_exception($@);
+    } else {
+      croak $@;
+    }
+  }
+}
 
-=head1 DESCRIPTION
+=head2 ensure_class_found
+
+Returns true if the specified class is installed or already loaded, false
+otherwise
+
+=cut
+
+sub ensure_class_found {
+  my ($class, $f_class) = @_;
+  return Class::Inspector->loaded($f_class) ||
+         Class::Inspector->installed($f_class);
+}
+
+# Returns a true value if the specified class is installed and loaded
+# successfully, throws an exception if the class is found but not loaded
+# successfully, and false if the class is not installed
+sub _load_optional_class {
+  my ($class, $f_class) = @_;
+  if ($class->ensure_class_found($f_class)) {
+    $class->ensure_class_loaded($f_class);
+    return 1;
+  } else {
+    return 0;
+  }
+}
 
 =head2 inject_base
 
-=head2 load_components
+Does the actual magic of adjusting @ISA on the target module.
 
-=head2 load_own_components
+=cut
+
+sub inject_base {
+  my ($class, $target, @to_inject) = @_;
+  {
+    no strict 'refs';
+    foreach my $to (reverse @to_inject) {
+      unshift( @{"${target}::ISA"}, $to )
+        unless ($target eq $to || $target->isa($to));
+    }
+  }
+
+  # Yes, this is hack. But it *does* work. Please don't submit tickets about
+  # it on the basis of the comments in Class::C3, the author was on #dbix-class
+  # while I was implementing this.
+
+  eval "package $target; import Class::C3;" unless exists $Class::C3::MRO{$target};
+}
 
 =head1 AUTHOR
 
-Matt S. Trout <mst@shadowcatsystems.co.uk>
+Matt S. Trout and the DBIx::Class team
+
+Pulled out into seperate module by Ash Berlin C<< <ash@cpan.org> >>
 
 =head1 LICENSE
 
 You may distribute this code under the same terms as Perl itself.
+
+=cut
+
+1;
