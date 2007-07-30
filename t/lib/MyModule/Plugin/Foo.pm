@@ -4,8 +4,7 @@ package # hide from pause
 use Class::C3;
 
 sub message { 
-  $DB::single = 1;
-  join(" ", "Foo", shift->next::method) 
+  "Foo";
 }
 
 1;

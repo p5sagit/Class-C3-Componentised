@@ -17,11 +17,21 @@ Load mix-ins or components to your C3-based class.
 
   use base 'Class::C3::Componentised';
 
-  sub component_base_class { "MyModule::Plugin" }
+  sub component_base_class { "MyModule::Component" }
 
   package main;
 
-  MyModule->load_components( $self->{plugins} );
+  MyModule->load_components( qw/Foo Bar/ ); 
+  # Will load MyModule::Component::Foo an MyModule::Component::Bar
+
+=head1 DESCRIPTION
+
+This will inject base classes to your module using the L<Class::C3> method
+resolution order.
+
+Please note: these are not plugins that can take precedence over methods 
+declared in MyModule. If you want something like that, consider
+L<MooseX::Object::Pluggable>.
 
 =head1 METHODS
 
@@ -158,7 +168,7 @@ sub inject_base {
   {
     no strict 'refs';
     foreach my $to (reverse @to_inject) {
-      unshift( @{"${target}::ISA"}, $to )
+      unshift ( @{"${target}::ISA"}, $to )
         unless ($target eq $to || $target->isa($to));
     }
   }
