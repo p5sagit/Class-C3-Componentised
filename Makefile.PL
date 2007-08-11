@@ -8,6 +8,7 @@ author    'Ash Berlin <ash@cpan.org>';
 requires  'Class::C3';
 requires  'Class::Inspector';
 requires  'Carp';
+requires  'Test::Exception';
 
 build_requires 'FindBin';
 

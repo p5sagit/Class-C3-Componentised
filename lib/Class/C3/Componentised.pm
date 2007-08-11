@@ -44,7 +44,7 @@ use Class::C3;
 use Class::Inspector;
 use Carp;
 
-our $VERSION = 1.0000;
+our $VERSION = 1.0001;
 
 =head2 load_components( @comps )
 
