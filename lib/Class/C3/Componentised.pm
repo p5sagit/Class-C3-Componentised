@@ -121,7 +121,9 @@ sub ensure_class_loaded {
   croak "Invalid class name $f_class"
       if ($f_class=~m/(?:\b:\b|\:{3,})/);
   return if Class::Inspector->loaded($f_class);
-  eval "require $f_class"; # require needs a bareword or filename
+  my $file = $f_class . '.pm';
+  $file =~ s{::}{/}g;
+  eval { CORE::require($file) }; # require needs a bareword or filename
   if ($@) {
     if ($class->can('throw_exception')) {
       $class->throw_exception($@);
