@@ -16,7 +16,8 @@ MyModule->load_components('Foo');
 
 # Clear down inc so ppl dont mess us up with installing modules that we
 # expect not to exist
-@INC = ();
+#@INC = ();
+# This breaks Carp1.08/perl 5.10.0; bah
 
 throws_ok { MyModule->load_components('+ClassC3ComponentFooThatShouldntExist'); } qr/^Can't locate ClassC3ComponentFooThatShouldntExist.pm in \@INC/;
 
