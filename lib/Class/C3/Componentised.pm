@@ -46,7 +46,7 @@ use MRO::Compat;
 use Class::Inspector;
 use Carp;
 
-our $VERSION = 1.0003;
+our $VERSION = 1.0004;
 
 =head2 load_components( @comps )
 
