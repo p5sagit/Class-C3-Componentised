@@ -41,8 +41,8 @@ use strict;
 use warnings;
 
 # see Makefile.PL for discussion on why we load both Class::C3 and MRO::Compat
-use MRO::Compat;
 use Class::C3 ();
+use MRO::Compat;
 use Class::Inspector;
 use Carp;
 
