@@ -67,7 +67,7 @@ sub load_components {
 
 =head2 load_own_components( @comps )
 
-Simialr to L<load_components>, but assumes every class is C<"$class::$comp">.
+Similar to L<load_components>, but assumes every class is C<"$class::$comp">.
 
 =cut
 
