@@ -46,7 +46,7 @@ use MRO::Compat;
 use Class::Inspector;
 use Carp;
 
-our $VERSION = 1.0004;
+our $VERSION = 1.0005;
 
 =head2 load_components( @comps )
 
@@ -167,6 +167,25 @@ sub inject_base {
 
   mro::set_mro($target, 'c3');
 }
+
+=head2 load_optional_class
+
+Returns a true value if the specified class is installed and loaded
+successfully, throws an exception if the class is found but not loaded
+successfully, and false if the class is not installed
+
+=cut
+
+sub load_optional_class {
+  my ($class, $f_class) = @_;
+  if ($class->ensure_class_found($f_class)) {
+    eval { $class->ensure_class_loaded($f_class) };
+    croak "Failed to load $f_class: $@" if $@;
+    return 1;
+  }
+  return 0;
+}
+
 
 =head1 AUTHOR
 
