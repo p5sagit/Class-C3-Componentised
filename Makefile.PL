@@ -1,4 +1,4 @@
-use inc::Module::Install 0.67;
+use inc::Module::Install 0.85;
 
 name      'Class-C3-Componentised';
 all_from  'lib/Class/C3/Componentised.pm';
