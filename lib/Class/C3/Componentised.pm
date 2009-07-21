@@ -60,8 +60,12 @@ Calling this will call C<Class::C3::reinitialize>.
 
 sub load_components {
   my $class = shift;
-  my $base = $class->component_base_class;
-  my @comp = map { /^\+(.*)$/ ? $1 : "${base}::$_" } grep { $_ !~ /^#/ } @_;
+  my @comp = map {
+              /^\+(.*)$/
+                ? $1
+                : join ('::', $class->component_base_class, $_)
+             }
+             grep { $_ !~ /^#/ } @_;
   $class->_load_components(@comp);
 }
 
@@ -95,9 +99,12 @@ found.
 
 sub load_optional_components {
   my $class = shift;
-  my $base = $class->component_base_class;
   my @comp = grep { $class->load_optional_class( $_ ) }
-             map { /^\+(.*)$/ ? $1 : "${base}::$_" } 
+             map {
+              /^\+(.*)$/
+                ? $1
+                : join ('::', $class->component_base_class, $_)
+             }
              grep { $_ !~ /^#/ } @_;
 
   $class->_load_components( @comp ) if scalar @comp;

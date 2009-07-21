@@ -1,5 +1,8 @@
 Revision history for Class-C3-Componentised
 
+        Allow derived classes without component_base_class(), given all
+        arguments to load_components are absolute class names (+Classname)
+
 1.0005   22 Apr 2009
         Add load_optional_class method
 

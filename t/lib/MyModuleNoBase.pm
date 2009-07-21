@@ -1,9 +1,7 @@
 package # hide from pause
-  MyModule;
+  MyModuleNoBase;
 
 use base 'Class::C3::Componentised';
-
-sub component_base_class { "MyModule::Plugin" }
 
 sub message { 
   my $msg = $_[0]->maybe::next::method() || '';
