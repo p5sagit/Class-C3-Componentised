@@ -22,7 +22,7 @@ Load mix-ins or components to your C3-based class.
   package main;
 
   MyModule->load_components( qw/Foo Bar/ ); 
-  # Will load MyModule::Component::Foo an MyModule::Component::Bar
+  # Will load MyModule::Component::Foo and MyModule::Component::Bar
 
 =head1 DESCRIPTION
 
@@ -145,7 +145,12 @@ sub ensure_class_loaded {
 =head2 ensure_class_found
 
 Returns true if the specified class is installed or already loaded, false
-otherwise
+otherwise.
+
+Note that the underlying mechanism (Class::Inspector->installed()) used by this
+sub will not, at the time of writing, correctly function when @INC includes
+coderefs. Since PAR relies upon coderefs in @INC, this function should be
+avoided in modules that are likely to be included within a PAR.
 
 =cut
 
