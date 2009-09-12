@@ -48,9 +48,11 @@ ok( !$retval, 'nonexistent package not loaded' );
 $retval = eval { MyModule->load_optional_class('MyModule::OwnComponent') };
 ok( !$@, 'load_optional_class on an existing class did not throw' );
 ok( $retval, 'MyModule::OwnComponent loaded' );
-eval { MyModule->load_optional_class('MyModule::ErrorComponent') };
-like( $@, qr/did not return a true value/,
-      'MyModule::ErrorComponent threw ok' );
+throws_ok (
+  sub { MyModule->load_optional_class('MyModule::ErrorComponent') },
+  qr/did not return a true value/,
+  'MyModule::ErrorComponent threw ok'
+);
 
 # Simulate a PAR environment
 { 
