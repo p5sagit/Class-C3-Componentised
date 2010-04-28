@@ -21,7 +21,7 @@ Load mix-ins or components to your C3-based class.
 
   package main;
 
-  MyModule->load_components( qw/Foo Bar/ ); 
+  MyModule->load_components( qw/Foo Bar/ );
   # Will load MyModule::Component::Foo and MyModule::Component::Bar
 
 =head1 DESCRIPTION
@@ -29,7 +29,7 @@ Load mix-ins or components to your C3-based class.
 This will inject base classes to your module using the L<Class::C3> method
 resolution order.
 
-Please note: these are not plugins that can take precedence over methods 
+Please note: these are not plugins that can take precedence over methods
 declared in MyModule. If you want something like that, consider
 L<MooseX::Object::Pluggable>.
 
@@ -50,7 +50,7 @@ our $VERSION = 1.0006;
 
 =head2 load_components( @comps )
 
-Loads the given components into the current module. If a module begins with a 
+Loads the given components into the current module. If a module begins with a
 C<+> character, it is taken to be a fully qualified class name, otherwise
 C<< $class->component_base_class >> is prepended to it.
 
@@ -92,7 +92,7 @@ sub _load_components {
 
 =head2 load_optional_components
 
-As L<load_components>, but will silently ignore any components that cannot be 
+As L<load_components>, but will silently ignore any components that cannot be
 found.
 
 =cut
@@ -217,5 +217,16 @@ Pulled out into seperate module by Ash Berlin C<< <ash@cpan.org> >>
 You may distribute this code under the same terms as Perl itself.
 
 =cut
+
+# <@mst> add to Class::C3::Componentised an export, ON_APPLY
+# <@mst> ON_APPLY { ... };
+# <@mst> that stores the coderef and the package name
+# <@mst> load_components then gets changed so it calls that
+# <@mst> then you can do $whatever in there
+# <@mst> you could even have BEFORE_APPLY and AFTER_APPLY
+# <@mst> so you can die() before you get pushed onto @INC if you want
+# >>> ribasushi needs to think a bit how does this help with auto-setting a rset class
+# <@ribasushi> it probably does, I'm slow today
+# <@mst> AFTER_APPLY { my ($me, $applied_to) = @_; $applied_to->resultset_class(...); }
 
 1;
