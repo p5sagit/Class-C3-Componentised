@@ -172,8 +172,15 @@ sub inject_base {
   {
     no strict 'refs';
     foreach my $to (reverse @to_inject) {
-      unshift ( @{"${target}::ISA"}, $to )
-        unless ($target eq $to || $target->isa($to));
+      unless ($target eq $to || $target->isa($to)) {
+         if (my $fn = $Class::C3::Componentised::LoadActions::Before{$to}) {
+            $to->$fn($target)
+         }
+         unshift ( @{"${target}::ISA"}, $to );
+         if (my $fn = $Class::C3::Componentised::LoadActions::After{$to}) {
+            $to->$fn($target)
+         }
+      }
     }
   }
 

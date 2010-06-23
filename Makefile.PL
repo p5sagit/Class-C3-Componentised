@@ -6,6 +6,7 @@ author    'Ash Berlin <ash@cpan.org>';
 
 
 requires  'MRO::Compat';
+requires  'Sub::Exporter';
 requires  'Class::Inspector';
 requires  'Carp';
 requires  'Test::Exception';
