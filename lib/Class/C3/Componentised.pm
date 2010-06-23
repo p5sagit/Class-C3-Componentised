@@ -188,13 +188,40 @@ sub inject_base {
   my $class = shift;
   my $target = shift;
 
-  for (reverse @_) {
-    no strict 'refs';
-    unshift ( @{"${target}::ISA"}, $_ )
-      unless ($target eq $_ || $target->isa($_));
-  }
-
   mro::set_mro($target, 'c3');
+
+  for my $comp (reverse @_) {
+    no strict 'refs';
+    unless ($target eq $comp || $target->isa($comp)) {
+      my @heritage = @{mro::get_linear_isa($comp)};
+
+      my @before = map {
+         my $to_run = $Class::C3::Componentised::ApplyHooks::Before{$_};
+         ($to_run?[$_,$to_run]:())
+      } @heritage;
+
+      for my $todo (@before) {
+         my ($parent, $fn)  = @$todo;
+         for my $f (reverse @$fn) {
+            $target->$f($parent)
+         }
+      }
+
+      unshift ( @{"${target}::ISA"}, $comp );
+
+      my @after = map {
+         my $to_run = $Class::C3::Componentised::ApplyHooks::After{$_};
+         ($to_run?[$_,$to_run]:())
+      } @heritage;
+
+      for my $todo (reverse @after) {
+         my ($parent, $fn)  = @$todo;
+         for my $f (@$fn) {
+            $target->$f($parent)
+         }
+      }
+    }
+  }
 }
 
 =head2 load_optional_class
