@@ -174,11 +174,11 @@ sub inject_base {
     foreach my $to (reverse @to_inject) {
       unless ($target eq $to || $target->isa($to)) {
          if (my $fn = $Class::C3::Componentised::LoadActions::Before{$to}) {
-            $to->$fn($target)
+            $target->$fn($to)
          }
          unshift ( @{"${target}::ISA"}, $to );
          if (my $fn = $Class::C3::Componentised::LoadActions::After{$to}) {
-            $to->$fn($target)
+            $target->$fn($to)
          }
       }
     }
