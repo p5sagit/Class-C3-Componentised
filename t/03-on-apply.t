@@ -15,8 +15,8 @@ BEGIN {
 
   use Class::C3::Componentised::LoadActions;
 
-  BEFORE_APPLY sub { $awesome_robot++; $first = $awesome_robot };
-  AFTER_APPLY  sub { $awesome_robot++;  $last  = $awesome_robot };
+  BEFORE_APPLY { $awesome_robot++; $first = $awesome_robot };
+  AFTER_APPLY  { $awesome_robot++;  $last  = $awesome_robot };
 
   1;
 }

@@ -11,7 +11,7 @@ sub AFTER_APPLY  { $After {scalar caller(1)} = $_[1] };
 
 sub _curry_class {
    my ($class, $name) = @_;
-   sub { $class->$name(@_) }
+   sub (&) { $class->$name(@_) }
 }
 
 use Sub::Exporter -setup => {
