@@ -40,8 +40,13 @@ L<MooseX::Object::Pluggable>.
 use strict;
 use warnings;
 
+# This will prime the Class::C3 namespace (either by loading it proper on 5.8
+# or by installing compat shims on 5.10+). A user might have a reasonable
+# expectation that using Class::C3::<something> will give him access to
+# Class::C3 itself, and this module has been providing this historically.
+# Therefore leaving it in indefinitely.
 use MRO::Compat;
-use Class::Inspector;
+
 use Carp;
 
 our $VERSION = 1.0006;
@@ -58,13 +63,12 @@ Calling this will call C<Class::C3::reinitialize>.
 
 sub load_components {
   my $class = shift;
-  my @comp = map {
-              /^\+(.*)$/
-                ? $1
-                : join ('::', $class->component_base_class, $_)
-             }
-             grep { $_ !~ /^#/ } @_;
-  $class->_load_components(@comp);
+  $class->_load_components( map {
+    /^\+(.*)$/
+      ? $1
+      : join ('::', $class->component_base_class, $_)
+    } grep { $_ !~ /^#/ } @_
+  );
 }
 
 =head2 load_own_components( @comps )
@@ -75,16 +79,15 @@ Similar to L<load_components>, but assumes every class is C<"$class::$comp">.
 
 sub load_own_components {
   my $class = shift;
-  my @comp = map { "${class}::$_" } grep { $_ !~ /^#/ } @_;
-  $class->_load_components(@comp);
+  $class->_load_components( map { "${class}::$_" } grep { $_ !~ /^#/ } @_ );
 }
 
 sub _load_components {
-  my ($class, @comp) = @_;
-  foreach my $comp (@comp) {
-    $class->ensure_class_loaded($comp);
-  }
-  $class->inject_base($class => @comp);
+  my $class = shift;
+  return unless @_;
+
+  $class->ensure_class_loaded($_) for @_;
+  $class->inject_base($class => @_);
   Class::C3::reinitialize();
 }
 
@@ -97,15 +100,16 @@ found.
 
 sub load_optional_components {
   my $class = shift;
-  my @comp = grep { $class->load_optional_class( $_ ) }
-             map {
-              /^\+(.*)$/
-                ? $1
-                : join ('::', $class->component_base_class, $_)
-             }
-             grep { $_ !~ /^#/ } @_;
-
-  $class->_load_components( @comp ) if scalar @comp;
+  $class->_load_components( grep
+    { $class->load_optional_class( $_ ) }
+    ( map
+      { /^\+(.*)$/
+          ? $1
+          : join ('::', $class->component_base_class, $_)
+      }
+      grep { $_ !~ /^#/ } @_
+    )
+  );
 }
 
 =head2 ensure_class_loaded
@@ -118,26 +122,39 @@ is thrown if the class is still not loaded.
       require
 =cut
 
-#
-# TODO: handle ->has_many('rel', 'Class'...) instead of
-#              ->has_many('rel', 'Some::Schema::Class'...)
-#
 sub ensure_class_loaded {
   my ($class, $f_class) = @_;
 
-  croak "Invalid class name $f_class"
+  no strict 'refs';
+
+  # ripped from Class::Inspector for speed
+  # note that the order is important (faster items are first)
+  return if ${"${f_class}::VERSION"};
+
+  return if @{"${f_class}::ISA"};
+
+  my $file = (join ('/', split ('::', $f_class) ) ) . '.pm';
+  return if $INC{$file};
+
+  for ( keys %{"${f_class}::"} ) {
+    return if ( *{"${f_class}::$_"}{CODE} );
+  }
+
+
+  # require always returns true on success
+  eval { require($file) } or do {
+
+    $@ = "Invalid class name $f_class"
       if ($f_class=~m/(?:\b:\b|\:{3,})/);
-  return if Class::Inspector->loaded($f_class);
-  my $file = $f_class . '.pm';
-  $file =~ s{::}{/}g;
-  eval { CORE::require($file) }; # require needs a bareword or filename
-  if ($@) {
+
     if ($class->can('throw_exception')) {
       $class->throw_exception($@);
     } else {
       croak $@;
     }
-  }
+  };
+
+  return;
 }
 
 =head2 ensure_class_found
@@ -153,9 +170,10 @@ avoided in modules that are likely to be included within a PAR.
 =cut
 
 sub ensure_class_found {
-  my ($class, $f_class) = @_;
-  return Class::Inspector->loaded($f_class) ||
-         Class::Inspector->installed($f_class);
+  #my ($class, $f_class) = @_;
+  require Class::Inspector;
+  return Class::Inspector->loaded($_[1]) ||
+         Class::Inspector->installed($_[1]);
 }
 
 
@@ -166,12 +184,15 @@ Does the actual magic of adjusting @ISA on the target module.
 =cut
 
 sub inject_base {
-  my ($class, $target, @to_inject) = @_;
-  {
+  my $class = shift;
+  my $target = shift;
+
+  my %isa = map { $_ => 1 } ($target, @{mro::get_linear_isa($target)} );
+
+  for (reverse @_) {
     no strict 'refs';
-    foreach my $to (reverse @to_inject) {
-      unshift ( @{"${target}::ISA"}, $to )
-        unless ($target eq $to || $target->isa($to));
+    unless ($isa{$_}++) {
+      unshift ( @{"${target}::ISA"}, $_ );
     }
   }
 
@@ -188,19 +209,24 @@ successfully, and false if the class is not installed
 
 sub load_optional_class {
   my ($class, $f_class) = @_;
-  eval { $class->ensure_class_loaded($f_class) };
+
+  # ensure_class_loaded either returns a () (*not* true)  or throws
+  eval {
+   $class->ensure_class_loaded($f_class);
+   1;
+  } && return 1;
+
   my $err = $@;   # so we don't lose it
-  if (! $err) {
-    return 1;
+
+  my $fn = quotemeta( (join ('/', split ('::', $f_class) ) ) . '.pm' );
+  if ($err =~ /Can't locate ${fn} in \@INC/ ) {
+    return 0;
+  }
+  elsif ($class->can('throw_exception')) {
+    $class->throw_exception($err);
   }
   else {
-    my $fn = (join ('/', split ('::', $f_class) ) ) . '.pm';
-    if ($err =~ /Can't locate ${fn} in \@INC/ ) {
-      return 0;
-    }
-    else {
-      die $err;
-    }
+    die $err;
   }
 }
 
