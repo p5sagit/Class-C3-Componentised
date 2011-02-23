@@ -1,9 +1,11 @@
-use inc::Module::Install 0.85;
+use inc::Module::Install 1.00;
+
+use 5.006002;
+perl_version '5.006002';
 
 name      'Class-C3-Componentised';
-all_from  'lib/Class/C3/Componentised.pm';
 author    'Ash Berlin <ash@cpan.org>';
-
+all_from  'lib/Class/C3/Componentised.pm';
 
 requires  'MRO::Compat';
 requires  'Class::Inspector';
