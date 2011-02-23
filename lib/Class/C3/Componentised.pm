@@ -51,6 +51,8 @@ use Carp;
 
 our $VERSION = 1.0006;
 
+my $invalid_class = qr/(?: \b:\b | \:{3,} | \:\:$ )/x;
+
 =head2 load_components( @comps )
 
 Loads the given components into the current module. If a module begins with a 
@@ -144,8 +146,7 @@ sub ensure_class_loaded {
   # require always returns true on success
   eval { require($file) } or do {
 
-    $@ = "Invalid class name $f_class"
-      if ($f_class=~m/(?:\b:\b|\:{3,})/);
+    $@ = "Invalid class name '$f_class'" if $f_class =~ $invalid_class;
 
     if ($class->can('throw_exception')) {
       $class->throw_exception($@);
@@ -218,11 +219,15 @@ sub load_optional_class {
 
   my $err = $@;   # so we don't lose it
 
-  my $fn = quotemeta( (join ('/', split ('::', $f_class) ) ) . '.pm' );
-  if ($err =~ /Can't locate ${fn} in \@INC/ ) {
-    return 0;
+  if ($f_class =~ $invalid_class) {
+    $err = "Invalid class name '$f_class'";
   }
-  elsif ($class->can('throw_exception')) {
+  else {
+    my $fn = quotemeta( (join ('/', split ('::', $f_class) ) ) . '.pm' );
+    return 0 if ($err =~ /Can't locate ${fn} in \@INC/ );
+  }
+
+  if ($class->can('throw_exception')) {
     $class->throw_exception($err);
   }
   else {

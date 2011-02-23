@@ -1,5 +1,8 @@
 Revision history for Class-C3-Componentised
 
+        Throw a readable exception when load_optional_class is given an
+        invalid class name
+
 1.0006   08 Sep 2009
         Allow derived classes without component_base_class(), given all
         arguments to load_components are absolute class names (+Classname)

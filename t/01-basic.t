@@ -8,7 +8,7 @@ use Class::Inspector;
 
 use lib "$FindBin::Bin/lib";
 
-plan tests => 22;
+plan tests => 23;
 
 BEGIN {
   package TestPackage::A;
@@ -53,6 +53,9 @@ throws_ok (
   qr/did not return a true value/,
   'MyModule::ErrorComponent threw ok'
 );
+
+eval { MyModule->load_optional_class('ENDS::WITH::COLONS::') };
+like( $@, qr/Invalid class name 'ENDS::WITH::COLONS::'/, 'Throw on Class::' );
 
 # Simulate a PAR environment
 { 
