@@ -1,5 +1,6 @@
 Revision history for Class-C3-Componentised
 
+1.0007   23 Feb 2011
         Throw a readable exception when load_optional_class is given an
         invalid class name
 
