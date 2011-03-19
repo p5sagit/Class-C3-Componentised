@@ -1,5 +1,8 @@
 Revision history for Class-C3-Componentised
 
+        Stop importing Carp functions (and thus polluting the inheritor
+        namespaces)
+
 1.0008   24 Feb 2011
         Fix inject_base regression introduced during optimizations in
         1.0007

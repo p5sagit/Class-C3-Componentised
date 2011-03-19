@@ -47,7 +47,7 @@ use warnings;
 # Therefore leaving it in indefinitely.
 use MRO::Compat;
 
-use Carp;
+use Carp ();
 
 our $VERSION = 1.0008;
 
@@ -151,7 +151,7 @@ sub ensure_class_loaded {
     if ($class->can('throw_exception')) {
       $class->throw_exception($@);
     } else {
-      croak $@;
+      Carp::croak $@;
     }
   };
 
