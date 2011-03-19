@@ -49,7 +49,7 @@ use MRO::Compat;
 
 use Carp;
 
-our $VERSION = 1.0007;
+our $VERSION = 1.0008;
 
 my $invalid_class = qr/(?: \b:\b | \:{3,} | \:\:$ )/x;
 
