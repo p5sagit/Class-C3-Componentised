@@ -142,9 +142,9 @@ sub ensure_class_loaded {
     return if ( *{"${f_class}::$_"}{CODE} );
   }
 
-
   # require always returns true on success
-  eval { require($file) } or do {
+  # ill-behaved modules might very well obliterate $_
+  eval { local $_; require($file) } or do {
 
     $@ = "Invalid class name '$f_class'" if $f_class =~ $invalid_class;
 

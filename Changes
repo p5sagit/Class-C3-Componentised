@@ -2,6 +2,8 @@ Revision history for Class-C3-Componentised
 
         Stop importing Carp functions (and thus polluting the inheritor
         namespaces)
+        Make sure $_ is properly preserved even if the loaded module
+        is negligent enough to change it (RT#66661)
 
 1.0008   24 Feb 2011
         Fix inject_base regression introduced during optimizations in
