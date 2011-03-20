@@ -22,6 +22,4 @@ requires  'Test::Exception';
 # will need adjustment if the require is removed
 requires  'Class::C3' => '0.20';
 
-build_requires 'FindBin';
-
 WriteAll;
