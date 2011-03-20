@@ -232,11 +232,19 @@ sub load_optional_class {
   }
 }
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Matt S. Trout and the DBIx::Class team
+Matt S. Trout and the L<DBIx::Class team|DBIx::Class/CONTRIBUTORS>
 
 Pulled out into seperate module by Ash Berlin C<< <ash@cpan.org> >>
+
+Optimizations and overall bolt-tightening by Peter "ribasushi" Rabbitson
+C<< <ribasushi@cpan.org> >>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2006 - 2011 the Class::C3::Componentised L</AUTHORS> as listed
+above.
 
 =head1 LICENSE
 
