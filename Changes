@@ -1,5 +1,6 @@
 Revision history for Class-C3-Componentised
 
+1.0009   20 Mar 2011
       - Stop importing Carp functions (and thus polluting the inheritor
         namespaces)
       - Make sure $_ is properly preserved even if the loaded module
