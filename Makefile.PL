@@ -22,4 +22,6 @@ requires  'Test::Exception';
 # will need adjustment if the require is removed
 requires  'Class::C3' => '0.20';
 
+resources repository => 'git://git.shadowcat.co.uk/p5sagit/Class-C3-Componentised.git';
+
 WriteAll;
