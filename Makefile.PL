@@ -24,4 +24,16 @@ requires  'Class::C3' => '0.20';
 
 resources repository => 'git://git.shadowcat.co.uk/p5sagit/Class-C3-Componentised.git';
 
+if ($Module::Install::AUTHOR) {
+
+  print "Regenerating README\n";
+  system('pod2text lib/Class/C3/Componentised.pm > README');
+
+  if (-f 'MANIFEST') {
+    print "Removing MANIFEST\n";
+    unlink 'MANIFEST';
+  }
+}
+
+
 WriteAll;
