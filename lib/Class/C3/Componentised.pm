@@ -48,6 +48,7 @@ use warnings;
 use MRO::Compat;
 
 use Carp ();
+use List::Util ();
 
 our $VERSION = 1.0009;
 
@@ -191,34 +192,18 @@ sub inject_base {
   mro::set_mro($target, 'c3');
 
   for my $comp (reverse @_) {
-    no strict 'refs';
+    my $apply = do {
+      no strict 'refs';
+      sub { unshift ( @{"${target}::ISA"}, $comp ) };
+    };
     unless ($target eq $comp || $target->isa($comp)) {
-      my @heritage = @{mro::get_linear_isa($comp)};
-
-      my @before = map {
-         my $to_run = $Class::C3::Componentised::ApplyHooks::Before{$_};
-         ($to_run?[$_,$to_run]:())
-      } @heritage;
-
-      for my $todo (@before) {
-         my ($parent, $fn)  = @$todo;
-         for my $f (reverse @$fn) {
-            $target->$f($parent)
-         }
-      }
-
-      unshift ( @{"${target}::ISA"}, $comp );
-
-      my @after = map {
-         my $to_run = $Class::C3::Componentised::ApplyHooks::After{$_};
-         ($to_run?[$_,$to_run]:())
-      } @heritage;
-
-      for my $todo (reverse @after) {
-         my ($parent, $fn)  = @$todo;
-         for my $f (@$fn) {
-            $target->$f($parent)
-         }
+      our %APPLICATOR_FOR;
+      if (my $apply_class
+            = List::Util::first { $APPLICATOR_FOR{$_} } @{mro::get_linear_isa($comp)}
+      ) {
+        $APPLICATOR_FOR{$apply_class}->_apply_component_to_class($comp,$target,$apply);
+      } else {
+        $apply->();
       }
     }
   }

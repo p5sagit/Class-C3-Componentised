@@ -6,8 +6,45 @@ use warnings;
 our %Before;
 our %After;
 
-sub BEFORE_APPLY (&) { push @{$Before{scalar caller}}, $_[0] };
-sub AFTER_APPLY  (&) { push @{$After {scalar caller}}, $_[0] };
+sub BEFORE_APPLY (&) {
+  push @{$Before{scalar caller}}, $_[0];
+  $Class::C3::Componentised::APPLICATOR_FOR{scalar caller} = __PACKAGE__;
+}
+sub AFTER_APPLY  (&) {
+  push @{$After {scalar caller}}, $_[0];
+  $Class::C3::Componentised::APPLICATOR_FOR{scalar caller} = __PACKAGE__;
+}
+
+sub _apply_component_to_class {
+  my ($me, $comp, $target, $apply) = @_;
+  my @heritage = @{mro::get_linear_isa($comp)};
+
+  my @before = map {
+     my $to_run = $Before{$_};
+     ($to_run?[$_,$to_run]:())
+  } @heritage;
+
+  for my $todo (@before) {
+     my ($parent, $fn)  = @$todo;
+     for my $f (reverse @$fn) {
+        $target->$f($parent)
+     }
+  }
+
+  $apply->();
+
+  my @after = map {
+     my $to_run = $After{$_};
+     ($to_run?[$_,$to_run]:())
+  } @heritage;
+
+  for my $todo (reverse @after) {
+     my ($parent, $fn)  = @$todo;
+     for my $f (@$fn) {
+        $target->$f($parent)
+     }
+  }
+} 
 
 {
    no strict 'refs';
@@ -29,11 +66,13 @@ sub AFTER_APPLY  (&) { push @{$After {scalar caller}}, $_[0] };
          if ($arg eq '-before_apply') {
             $default = 0;
             $skip = 1;
-            push @{$Before{$to}}, $args[$i + 1]
+            push @{$Before{$to}}, $args[$i + 1];
+            $Class::C3::Componentised::APPLICATOR_FOR{$to} = $from;
          } elsif ($arg eq '-after_apply') {
             $default = 0;
             $skip = 1;
             push @{$After{$to}}, $args[$i + 1];
+            $Class::C3::Componentised::APPLICATOR_FOR{$to} = $from;
          } elsif ($arg =~ /^BEFORE_APPLY|AFTER_APPLY$/) {
             $default = 0;
             push @import, $arg
