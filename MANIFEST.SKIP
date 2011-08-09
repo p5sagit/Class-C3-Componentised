@@ -1,8 +1,14 @@
+^(?!script/|examples/|lib/|inc/|t/|xt/|Makefile.PL$|README$|MANIFEST$|Changes$|META.yml$)
+
+
 # Avoid version control files.
 \bRCS\b
 \bCVS\b
 ,v$
 \B\.svn\b
+\B\.git\b
+\B\.gitignore\b
+\b_darcs\b
 
 # Avoid Makemaker generated and utility files.
 \bMakefile$
@@ -32,14 +38,18 @@
 # avoid OS X finder files
 \.DS_Store$
 
+# Don't ship the test db
+^t/var
+
 # Don't ship the last dist we built :)
 \.tar\.gz$
 
 # Skip maint stuff
 ^maint/
 
-# Avoid copies to .orig
+# Avoid patch remnants
 \.orig$
+\.rej$
 
 # Dont use Module::Build anymore
 ^Build.PL$
