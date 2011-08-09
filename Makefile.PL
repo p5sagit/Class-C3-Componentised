@@ -7,10 +7,10 @@ name      'Class-C3-Componentised';
 author    'Ash Berlin <ash@cpan.org>';
 all_from  'lib/Class/C3/Componentised.pm';
 
-requires  'MRO::Compat';
-requires  'Class::Inspector';
-requires  'Carp';
-requires  'Test::Exception';
+test_requires  'Test::Exception' => '0.31';
+
+requires  'MRO::Compat'         => '0.09';
+requires  'Class::Inspector'    => '1.23';
 
 # we don't actually need Class::C3. MRO::Compat loads it on 5.8. On 5.10 it
 # isn't needed. However, some existing code relies on us loading Class::C3. We
