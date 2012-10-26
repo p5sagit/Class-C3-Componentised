@@ -8,6 +8,7 @@ author    'Ash Berlin <ash@cpan.org>';
 all_from  'lib/Class/C3/Componentised.pm';
 
 test_requires  'Test::Exception' => '0.31';
+test_requires  'Test::More' => '0.96';
 
 requires  'MRO::Compat'         => '0.09';
 requires  'Class::Inspector'    => '1.23';
