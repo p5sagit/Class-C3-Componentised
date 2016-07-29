@@ -96,7 +96,7 @@ like( $@, qr/Invalid class name 'ENDS::WITH::COLONS::'/, 'Throw on Class::' );
   ok( $retval, 'PAR package "loaded"' );
   
   # see if we can still load stuff with the coderef present
-  $retval = eval { MyModule->load_optional_class('Class::C3') };
+  $retval = eval { MyModule->load_optional_class('AnotherModule') };
   ok( !$@, 'load_optional_class did not throw' ) || diag $@;
-  ok( $retval, 'Class::C3 loaded' );
+  ok( $retval, 'AnotherModule loaded' );
 }

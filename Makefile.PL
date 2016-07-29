@@ -17,10 +17,6 @@ requires  'Class::Inspector'    => '1.23';
 # isn't needed. However, some existing code relies on us loading Class::C3. We
 # don't want to break it just yet. Therefore we depend directly on Class::C3 as
 # well.
-
-### !!! IMPORTANT !!! ###
-# tests currently rely on Class::C3 availability, by requiring it directly
-# will need adjustment if the require is removed
 requires  'Class::C3' => '0.20';
 
 resources repository => 'git://git.shadowcat.co.uk/p5sagit/Class-C3-Componentised.git';
