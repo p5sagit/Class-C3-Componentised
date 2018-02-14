@@ -2,11 +2,7 @@ package Class::C3::Componentised;
 
 =head1 NAME
 
-Class::C3::Componentised
-
-=head1 DESCRIPTION
-
-Load mix-ins or components to your C3-based class.
+Class::C3::Componentised - Load mix-ins or components to your C3-based class
 
 =head1 SYNOPSIS
 
