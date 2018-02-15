@@ -73,7 +73,8 @@ sub load_components {
 
 =head2 load_own_components( @comps )
 
-Similar to L<load_components>, but assumes every class is C<"$class::$comp">.
+Similar to L<load_components|/load_components( @comps )>, but assumes every
+class is C<"$class::$comp">.
 
 =cut
 
@@ -93,8 +94,8 @@ sub _load_components {
 
 =head2 load_optional_components
 
-As L<load_components>, but will silently ignore any components that cannot be
-found.
+As L<load_components|/load_components( @comps )>, but will silently ignore any
+components that cannot be found.
 
 =cut
 
@@ -173,7 +174,7 @@ sub ensure_class_found {
 
 =head2 inject_base
 
-Does the actual magic of adjusting @ISA on the target module.
+Does the actual magic of adjusting C<@ISA> on the target module.
 
 =cut
 
