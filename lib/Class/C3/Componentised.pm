@@ -47,8 +47,7 @@ use Carp ();
 use List::Util ();
 
 our $VERSION = '1.001000';
-
-$VERSION = eval $VERSION if $VERSION =~ /_/; # numify for warning-free dev releases
+$VERSION =~ tr/_//d;
 
 my $invalid_class = qr/(?: \b:\b | \:{3,} | \:\:$ )/x;
 
