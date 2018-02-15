@@ -1,17 +1,17 @@
 Revision history for Class-C3-Componentised
 
       - list test prerequisites as test prerequisites rather than runtime
-        prerequisites (RT#100637)
+        prerequisites. (RT#100637)
       - correctly list Test::More 0.96 as a test prerequisite (RT#77611)
-      - stop using Class::C3 in tests.  it is still listed as a prerequisite
+      - stop using Class::C3 in tests.  it is still listed as a prerequisite.
         because some things expect it to be available once this module is
         installed.
       - convert packaging from using Module::Install to plain
         ExtUtils::MakeMaker, with Distar for releasing.  This fixes issues when
         the current directory is not in @INC (perl 5.26).  Fixes RT#121696,
         RT#120826
-      - fixed typo in documentation
-      - fixed module abstracts
+      - fixed typo in documentation. (RT#85355)
+      - fixed module abstracts.
       - increase Class::Inspector prereq to 1.32 to fix ensure_class_found on
         modules provided by @INC hooks, such as PAR. (RT#42845)
 
