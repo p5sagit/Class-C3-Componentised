@@ -51,6 +51,9 @@ my %META = (
   no_index => {
     directory => [ 't', 'xt' ]
   },
+  x_authority => "cpan:FREW",
+  dynamic_config => 0,
+  x_static_install => 1,
 );
 
 my %MM_ARGS = ();
