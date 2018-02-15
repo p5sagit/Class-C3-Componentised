@@ -1,5 +1,7 @@
 package # hide from pause
   MyModule::Plugin::Foo;
+use strict;
+use warnings;
 
 use MRO::Compat;
 use mro 'c3';

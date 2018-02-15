@@ -1,5 +1,7 @@
 package # hide from pause
   MyModuleNoBase;
+use strict;
+use warnings;
 
 use base 'Class::C3::Componentised';
 
