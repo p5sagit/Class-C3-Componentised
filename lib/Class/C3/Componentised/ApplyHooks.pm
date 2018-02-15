@@ -90,7 +90,7 @@ sub _apply_component_to_class {
 
 =head1 NAME
 
-Class::C3::Componentised::ApplyHooks
+Class::C3::Componentised::ApplyHooks - Run methods before or after components are injected
 
 =head1 SYNOPSIS
 
