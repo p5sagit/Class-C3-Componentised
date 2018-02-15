@@ -3,13 +3,13 @@ package # hide from pause
 
 use base 'Class::C3::Componentised';
 
-sub message { 
+sub message {
   my $msg = $_[0]->maybe::next::method() || '';
-  
+
   return $msg . ' ' . __PACKAGE__;
 }
 
-sub new { 
+sub new {
   return bless {}, shift;
 }
 

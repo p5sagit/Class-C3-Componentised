@@ -17,7 +17,7 @@ Class::C3::Componentised - Load mix-ins or components to your C3-based class
 
   package main;
 
-  MyModule->load_components( qw/Foo Bar/ ); 
+  MyModule->load_components( qw/Foo Bar/ );
   # Will load MyModule::Component::Foo and MyModule::Component::Bar
 
 =head1 DESCRIPTION
@@ -25,7 +25,7 @@ Class::C3::Componentised - Load mix-ins or components to your C3-based class
 This will inject base classes to your module using the L<Class::C3> method
 resolution order.
 
-Please note: these are not plugins that can take precedence over methods 
+Please note: these are not plugins that can take precedence over methods
 declared in MyModule. If you want something like that, consider
 L<MooseX::Object::Pluggable>.
 
@@ -53,7 +53,7 @@ my $invalid_class = qr/(?: \b:\b | \:{3,} | \:\:$ )/x;
 
 =head2 load_components( @comps )
 
-Loads the given components into the current module. If a module begins with a 
+Loads the given components into the current module. If a module begins with a
 C<+> character, it is taken to be a fully qualified class name, otherwise
 C<< $class->component_base_class >> is prepended to it.
 
@@ -93,7 +93,7 @@ sub _load_components {
 
 =head2 load_optional_components
 
-As L<load_components>, but will silently ignore any components that cannot be 
+As L<load_components>, but will silently ignore any components that cannot be
 found.
 
 =cut

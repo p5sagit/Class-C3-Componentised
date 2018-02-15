@@ -58,7 +58,7 @@ eval { MyModule->load_optional_class('ENDS::WITH::COLONS::') };
 like( $@, qr/Invalid class name 'ENDS::WITH::COLONS::'/, 'Throw on Class::' );
 
 # Simulate a PAR environment
-{ 
+{
   my @code;
   local @INC = @INC;
   unshift @INC, sub {
@@ -73,7 +73,7 @@ like( $@, qr/Invalid class name 'ENDS::WITH::COLONS::'/, 'Throw on Class::' );
   $retval = eval { MyModule->load_optional_class('FAKE::PAR::PACKAGE') };
   ok( !$@, 'load_optional_class on a nonexistent PAR class did not throw' );
   ok( !$retval, 'nonexistent PAR package not loaded' );
-  
+
 
   # simulate a class which does load but does not return true
   @code = (
@@ -84,7 +84,7 @@ like( $@, qr/Invalid class name 'ENDS::WITH::COLONS::'/, 'Throw on Class::' );
   $retval = eval { MyModule->load_optional_class('VIRTUAL::PAR::PACKAGE') };
   ok( $@, 'load_optional_class of a no-true-returning PAR module did throw' );
   ok( !$retval, 'no-true-returning PAR package not loaded' );
-  
+
   # simulate a normal class (no one adjusted %INC so it will be tried again
   @code = (
     q/package VIRTUAL::PAR::PACKAGE;/,
@@ -94,7 +94,7 @@ like( $@, qr/Invalid class name 'ENDS::WITH::COLONS::'/, 'Throw on Class::' );
   $retval = eval { MyModule->load_optional_class('VIRTUAL::PAR::PACKAGE') };
   ok( !$@, 'load_optional_class of a PAR module did not throw' );
   ok( $retval, 'PAR package "loaded"' );
-  
+
   # see if we can still load stuff with the coderef present
   $retval = eval { MyModule->load_optional_class('AnotherModule') };
   ok( !$@, 'load_optional_class did not throw' ) || diag $@;

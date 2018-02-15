@@ -4,7 +4,7 @@ package # hide from pause
 use MRO::Compat;
 use mro 'c3';
 
-sub message { 
+sub message {
   "Foo";
 }
 
