@@ -161,11 +161,6 @@ sub ensure_class_loaded {
 Returns true if the specified class is installed or already loaded, false
 otherwise.
 
-Note that the underlying mechanism (Class::Inspector->installed()) used by this
-sub will not, at the time of writing, correctly function when @INC includes
-coderefs. Since PAR relies upon coderefs in @INC, this function should be
-avoided in modules that are likely to be included within a PAR.
-
 =cut
 
 sub ensure_class_found {

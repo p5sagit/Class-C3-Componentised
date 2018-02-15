@@ -21,7 +21,7 @@ my %META = (
       requires => {
         'perl'              => '5.006002',
         'MRO::Compat'       => '0.09',
-        'Class::Inspector'  => '1.23',
+        'Class::Inspector'  => '1.32',
         # we don't actually need Class::C3. MRO::Compat loads it on 5.8. On 5.10
         # it isn't needed. However, some existing code relies on us loading
         # Class::C3. We don't want to break it just yet. Therefore we depend

@@ -12,6 +12,8 @@ Revision history for Class-C3-Componentised
         RT#120826
       - fixed typo in documentation
       - fixed module abstracts
+      - increase Class::Inspector prereq to 1.32 to fix ensure_class_found on
+        modules provided by @INC hooks, such as PAR. (RT#42845)
 
 1.001000 08 Aug 2011
       - Add Class::C3::Componentised::ApplyHooks features
