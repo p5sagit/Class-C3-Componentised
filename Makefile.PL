@@ -29,6 +29,12 @@ my %META = (
         'Class::C3'         => '0.20',
       },
     },
+    develop => {
+      requires => {
+        'Test::Pod' => '1.14',
+        'Test::Pod::Coverage' => '1.04',
+      },
+    },
   },
   resources => {
     repository => {
