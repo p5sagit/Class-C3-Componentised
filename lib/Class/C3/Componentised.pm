@@ -245,7 +245,7 @@ sub load_optional_class {
 
 Matt S. Trout and the L<DBIx::Class team|DBIx::Class/CONTRIBUTORS>
 
-Pulled out into seperate module by Ash Berlin C<< <ash@cpan.org> >>
+Pulled out into separate module by Ash Berlin C<< <ash@cpan.org> >>
 
 Optimizations and overall bolt-tightening by Peter "ribasushi" Rabbitson
 C<< <ribasushi@cpan.org> >>
