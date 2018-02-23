@@ -1,5 +1,9 @@
 Revision history for Class-C3-Componentised
 
+      - fixed author metadata
+      - added x_static_install and dynamic_config=0 to metadata
+      - added x_authority to metadata
+
 1.001_001 - 2018-02-15
       - list test prerequisites as test prerequisites rather than runtime
         prerequisites. (RT#100637)
